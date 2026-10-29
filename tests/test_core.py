@@ -39,9 +39,11 @@ class AdjustTests(unittest.TestCase):
         self.assertEqual(adjust([], "bh"), [])
 
     def test_qvalue(self):
-        q, pi0 = qvalue_storey([0.001, 0.01, 0.6, 0.8, 0.9, 0.7])
-        self.assertAlmostEqual(pi0, 4 / 3 if 4 / 3 < 1 else 1.0)
-        self.assertEqual(len(q), 6)
+        p = [0.001, 0.002, 0.003, 0.004, 0.01, 0.02, 0.6, 0.9]
+        q, pi0 = qvalue_storey(p)
+        self.assertAlmostEqual(pi0, 2 / (0.5 * 8))          # two p-values above lambda = 0.5
+        self.assertEqual([round(x, 6) for x in q], [round(0.5 * x, 6) for x in adjust(p, "bh")])
+        self.assertEqual(qvalue_storey([0.6, 0.7, 0.8])[1], 1.0)   # pi0 is capped at 1
 
     def test_cli_csv(self):
         with tempfile.TemporaryDirectory() as d:
